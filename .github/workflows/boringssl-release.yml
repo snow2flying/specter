@@ -11,6 +11,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   package:
     name: Package prebuilt BoringSSL
@@ -55,9 +59,9 @@ jobs:
           done
           
           # Create all-in-one archive
-          tar -czf boringssl-all-targets.tar.gz include/ */
-          
-          ls -lh *.tar.gz *.zip 2>/dev/null || true
+          tar -czf boringssl-all-targets.tar.gz include/ ./*
+
+          ls -lh ./*.tar.gz ./*.zip 2>/dev/null || true
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
